@@ -13,6 +13,8 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
 exports.sms = functions.https.onRequest((req, res) => {
   const twiml = new MessagingResponse();
   
+  console.log('reqbody', req.body)
+
   const textMessage = req.body.Body
   const fromNumber = req.body.From
   admin.database()
@@ -42,8 +44,13 @@ const saveToFirebase = (key, chat, textMessage) => {
   })
 
   const newChat = Object.assign({}, chat, {chatHistory: newChatHistory})
-  
-  admin.database()
-    .ref('chat/'+key)
-    .set(newChat)
+  console.log('newChat', newChat)
+
+  try {
+      admin.database()
+        .ref('chat/'+key)
+        .set(newChat)
+  } catch (error) {
+    console.log(error)
+  }
 }
